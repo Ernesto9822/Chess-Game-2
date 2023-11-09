@@ -241,7 +241,7 @@ bool MoverFicha(char tablero[8][8], string origen, string destino) {
 int main(){
 	  cout << "****CHESS GAME******"  << endl; 
 	  cout << "\n";
-	  
+	  cout << "pronam";
 	char tablero[8][8];
     InicializarTablero(tablero);
     MostrarTablero(tablero);
