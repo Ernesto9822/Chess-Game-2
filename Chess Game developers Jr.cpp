@@ -227,11 +227,22 @@ bool MoverFicha(char tablero[8][8], string origen, string destino) {
 			 return false;
         case 'Q':
         case 'q':
-            return MoverReina(tablero, fila_origen, columna_origen, fila_destino, columna_destino);
-        case 'R':
+            MoverReina(tablero, fila_origen, columna_origen, fila_destino, columna_destino);
+       		if(MoverReina){
+       			tablero[fila_destino][columna_destino] = tablero[fila_origen][columna_origen];
+       			tablero[fila_origen][columna_origen] =' ';
+       		return true;
+			   }
+			return false;
+		case 'R':
         case 'r':
-            return MoverRey(tablero, fila_origen, columna_origen, fila_destino, columna_destino);
-        default:
+            MoverRey(tablero, fila_origen, columna_origen, fila_destino, columna_destino);
+        	if(MoverRey){
+        		tablero[fila_destino][columna_destino] = tablero[fila_origen][columna_destino];
+        		tablero[fila_origen][columna_origen] =' ';
+        	return true;
+			}
+		default:
             return false; // Ficha inválida
     }
 }
@@ -241,7 +252,6 @@ bool MoverFicha(char tablero[8][8], string origen, string destino) {
 int main(){
 	  cout << "****CHESS GAME******"  << endl; 
 	  cout << "\n";
-	  cout << "pronam";
 	char tablero[8][8];
     InicializarTablero(tablero);
     MostrarTablero(tablero);
