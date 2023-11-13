@@ -34,25 +34,15 @@ void InicializarTablero(char tablero[8][8]){
 	tablero[7][5] = 'a'; //alfil derecho blanco
 	tablero[7][6] = 'c'; // Caballo derecho blanco
 	
-	//Peones Negros.
-	tablero[1][0] = 'P'; // Peon negro
-	tablero[1][1] = 'P'; // Peon negro
-	tablero[1][2] = 'P'; // Peon negro
-	tablero[1][3] = 'P'; // Peon negro
-	tablero[1][4] = 'P'; // Peon negro
-	tablero[1][5] = 'P'; // Peon negro
-	tablero[1][6] = 'P'; // Peon negro
-	tablero[1][7] = 'P'; // Peon negro
-	
-	// Peones Blancos.
-	tablero[6][0] = 'p'; //peon blanco
-	tablero[6][1] = 'p'; //peon blanco
-	tablero[6][2] = 'p'; //peon blanco
-	tablero[6][3] = 'p'; //peon blanco   
-	tablero[6][4] = 'p'; //peon blanco
-	tablero[6][5] = 'p'; //peon blanco
-	tablero[6][6] = 'p'; //peon blanco
-    tablero[6][7] = 'p'; //peon blanco
+ // Peones Negros.
+    for (int i = 0; i < 8; i++) {
+        tablero[1][i] = 'P'; // aqui podemos automatizar el rellenado de los peones negros
+    }
+
+    // Peones Blancos.
+    for (int i = 0; i < 8; i++) {
+        tablero[6][i] = 'p'; // aqui podemos automatizar el rellenado de los peones blancos
+    }
 	
 	//iremos agregando las demas piezas aqui.
 	
@@ -170,7 +160,30 @@ bool MoverRey(char tablero[8][8], int fila_origen, int columna_origen, int fila_
     return (fila_dif <= 1 && columna_dif <= 1);
 }
 
-bool MoverFicha(char tablero[8][8], string origen, string destino) {
+// Validar si el usuario se ajusta a los parametros del juego, es decir que no pueda colocar mas de dos palabras
+bool EsFormatoCorrecto(const string& entrada) {
+    if (entrada.length() != 2) {
+    	cout << "Formato incorrecto. Debe tener dos caracteres." << endl;
+        return false;  // Si tiene mas de dos palabras
+    }
+
+    char columna = entrada[0];
+    char fila = entrada[1];
+
+    if (!isalpha(columna) || !isdigit(fila)) {
+        return false;  // Valida si tiene una letra y un numero
+    }
+
+    // Aqui garantizamos que tenga no sea una letra invalida o un numero mayor a lo permitido en el tablero
+    if (columna < 'a' || columna > 'h' || fila < '1' || fila > '8') {
+    	cout << "Formato incorrecto. Utilice una letra entre 'a' y 'h' para la columna y un numero entre '1' y '8' para la fila." << endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool MoverFicha(char tablero[8][8], string origen, string destino, char turno ) {
     // Convierte las coordenadas de texto a índices de matriz
     int fila_origen = 8 - (origen[1] - '0');  // 6
     int columna_origen = origen[0] - 'a';
@@ -183,10 +196,21 @@ bool MoverFicha(char tablero[8][8], string origen, string destino) {
         tablero[fila_origen][columna_origen] == ' ') {
         return false;
     }
-
+	
+	
     // Obtén el tipo de ficha
     char ficha = tablero[fila_origen][columna_origen];
+    
+	// Verifica que la ficha pertenezca al jugador que tiene el turno
+    if ((turno == 'b' && isupper(ficha)) || (turno == 'n' && islower(ficha))) {
+        return false;
+    }
 
+    // Verifica que la ficha de destino no sea del mismo jugador
+    if ((isupper(ficha) && isupper(tablero[fila_destino][columna_destino])) ||
+        (islower(ficha) && islower(tablero[fila_destino][columna_destino]))) {
+        return false;
+    }
     // Llama a la función específica para el tipo de ficha,C
     switch(ficha) {
         case 'P':
@@ -259,8 +283,31 @@ int main(){
     // Aquí puedes agregar la lógica para que los jugadores realicen movimientos
 	
 	string origen, destino;
+	
+	 char turno = 'b';
 
     while (true) {
+        cout << "\nTurno de las fichas " << turno << endl;
+
+        do {
+            cout << " Ingrese el origen (por ejemplo, e2): ";
+            cin >> origen;
+        } while (!EsFormatoCorrecto(origen));
+
+        do {
+            cout << " Ingrese el destino (por ejemplo, e4): ";
+            cin >> destino;
+        } while (!EsFormatoCorrecto(destino));
+
+        if (MoverFicha(tablero, origen, destino, turno)) {
+            MostrarTablero(tablero);
+            // Aqui cambiamos elturno para el siguiente jugador
+            turno = (turno == 'b') ? 'n' : 'b';
+        } else {
+            cout << "Movimiento invalido. Intentelo de nuevo." << endl;
+        }
+    }
+   /* while (true) {
     	cout << "\n";
         cout << " Ingrese el origen (por ejemplo, e2): ";
         cin >> origen;
@@ -273,7 +320,7 @@ int main(){
         } else {
             cout << "Movimiento inválido. Inténtelo de nuevo." << endl;
         }
-    }
+    } modificando el original */ 
 	
 	
 	getch();
